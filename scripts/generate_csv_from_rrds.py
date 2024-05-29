@@ -25,35 +25,8 @@ class RRDtoCSV:
         for field in self.fields:
             os.remove("{0}/{1}.xml".format(self.data_dir_path, field))
 
-    def compute_timestamp_range(self):
-        max_starting_timestamp = 0
-        min_ending_timestamp = 2000000000
-
-        for field in self.fields:
-            first_timestamp_found = False
-
-            with open("{}/{}.xml".format(self.data_dir_path, field)) as xml_file_obj:
-                xml_content = xml_file_obj.readlines()
-
-                for index in range(len(xml_content)):
-                    if index>0 and "<database>" in xml_content[index-1] and not first_timestamp_found:
-                        line = xml_content[index]
-                        epoch_timestamp = int(line.split("/")[1].split("-->")[0].strip())
-                        max_starting_timestamp = max(max_starting_timestamp, epoch_timestamp)
-                        first_timestamp_found = True
-
-                    if index<len(xml_content)-1 and  "</database>" in xml_content[index+1]:
-                        line = xml_content[index]
-                        epoch_timestamp = int(line.split("/")[1].split("-->")[0].strip())
-                        min_ending_timestamp = min(min_ending_timestamp, epoch_timestamp)
-                        break
-
-        self.max_starting_timestamp = max_starting_timestamp
-        self.min_ending_timestamp = min_ending_timestamp
-
     def generate_csv_file(self):
-        self.compute_timestamp_range()
-        array = [[ts] for ts in range(self.max_starting_timestamp, self.min_ending_timestamp+1, 15)]
+        timestamp_dic = {}
 
         for field in self.fields:
             traversing_database = False
@@ -69,14 +42,21 @@ class RRDtoCSV:
                         break
                     if traversing_database:
                         epoch_timestamp = int(line.split("/")[1].split("-->")[0].strip())
-                        if epoch_timestamp>=self.max_starting_timestamp and epoch_timestamp<=self.min_ending_timestamp:
-                            value = line.split("<v>")[1].split("</v>")[0]
-                            array[(epoch_timestamp-self.max_starting_timestamp)//15].append(value)
 
+                        if epoch_timestamp not in timestamp_dic:
+                            timestamp_dic[epoch_timestamp] = ["NaN" for _ in range(len(self.fields))]
+                        value = line.split("<v>")[1].split("</v>")[0]
+                        timestamp_dic[epoch_timestamp][self.fields.index(field)] = value
+
+        matrix_format_data = []
         header = ["Epoch Timestamp"]
         header.extend(self.fields)
-        array.insert(0, header)
-        numpy.savetxt(self.csv_file_path, array, fmt='%s', delimiter=",")
+        matrix_format_data.append(header)
+
+        for ts in timestamp_dic:
+            matrix_format_data.append([ts]+timestamp_dic[ts])
+
+        numpy.savetxt(self.csv_file_path, matrix_format_data, fmt='%s', delimiter=",")
 
         self.teardownXMLs()
 

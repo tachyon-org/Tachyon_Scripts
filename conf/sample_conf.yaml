@@ -1,4 +1,0 @@
-data_dir_path: "/Users/sanjaychari/Documents/RPI/Tachyon_Research/ganglia_database/rrds/Manager/novadaq-far-datadisk-04.fnal.gov"
-fields:
-  - all_fields
-csv_file_path: "/Users/sanjaychari/Documents/RPI/Tachyon_Research/ganglia_database/rrds/Manager/novadaq-far-datadisk-04.fnal.gov/novadaq-far-datadisk-04.fnal.gov.csv"
