@@ -1,4 +1,4 @@
-data_dir_path: "/Users/sanjaychari/Documents/RPI/Tachyon_Research/ganglia_database/rrds/Manager/novadaq-far-dd-07.fnal.gov"
+data_dir_path: "<Fill in path to data directory>"
 fields:
   - all_fields
-csv_file_path: "/Users/sanjaychari/Documents/RPI/Tachyon_Research/ganglia_database/rrds/Manager/novadaq-far-dd-07.fnal.gov/novadaq-far-dd-07.fnal.gov.csv"
+csv_file_path: "<Fill in path to write csv file>"

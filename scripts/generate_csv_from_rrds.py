@@ -1,3 +1,7 @@
+# Usage: python3 <path to conf file>
+# This script is used to generate a csv file with fields from multiple rrd files.
+# An example conf file is included as conf/generate_csv_from_rrds_sample_conf.yaml.
+
 import yaml
 import os
 import sys
